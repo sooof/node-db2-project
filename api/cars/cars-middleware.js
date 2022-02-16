@@ -11,6 +11,7 @@ const checkCarId = async (req, res, next) => {
     if(!car){
       next({status: 404, message: `car with id ${req.params.id} is not found` })
     }else{
+      req.car = car
       next()
     }
   }catch(err){
@@ -46,17 +47,15 @@ const checkVinNumberValid = (req, res, next) => {
   // next()
   try{
     // var existVin = vinValidator.validate('11111111111111111'); 
-    var existVin = vinValidator.validate(req.body.vim.trim()); 
-    console.log(existVin)
-
-    if(existVin){
-      next({ status: 400, message: `vin ${req.body.vin} is invalid`})
-    }else{
+    var isValidVin = vinValidator.validate(req.body.vin) 
+    console.log(isValidVin)
+    if(isValidVin){
       next()
+    }else{
+      next({ status: 400, message: `vin ${req.body.vin} is invalid`})
     }
-
   }catch(err){
-    next(err)
+    next()
   }
 }
 
@@ -66,7 +65,7 @@ const checkVinNumberUnique = async (req, res, next) => {
   // next()
   try{
     const existCarvin = await db('cars').where('vin', req.body.vin.trim()).first()
-    console.log(existCarvin)
+    // console.log(existCarvin)
     if(existCarvin){
       next({ status: 400, message: `vin ${req.body.vin} already exists`})
     }else{

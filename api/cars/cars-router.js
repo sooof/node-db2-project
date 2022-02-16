@@ -20,7 +20,8 @@ router.get('/', async (req, res, next)=>{
     
 router.get('/:id', checkCarId, async (req, res, next)=>{
     try{
-        res.json({message: "[GET] car by id"})
+        // res.json({message: "[GET] car by id"})
+        res.json(req.car)
     }catch(err){
         next(err)
     }
@@ -31,7 +32,9 @@ checkVinNumberValid,
 checkVinNumberUnique,
 async (req, res, next)=>{
     try{
-        res.json({message: "[POST] car"})
+        // res.json({message: "[POST] car"})
+        const car = await Car.create(req.body)
+        res.status(201).json(car)
     }catch(err){
         next(err)
     }
